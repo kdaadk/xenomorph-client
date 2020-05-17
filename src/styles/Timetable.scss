@@ -1,0 +1,176 @@
+$table-header: #3f51b5;
+$table-header-border: #1976D2;
+$table-border: #d9d9d9;
+$row-bg: #f4f2f1;
+$column-hover: #f5f5f5;
+
+div {
+  box-sizing: border-box;
+}
+
+.table-container {
+  display: block;
+  margin: 2em auto;
+  width: 80%;
+}
+
+.flag-icon {
+  margin-right: 0.1em;
+}
+
+.flex-table {
+  display: flex;
+  flex-flow: row wrap;
+  border-left: solid 1px $table-border;
+  transition: 0.5s;
+  &:first-of-type {
+    border-top: solid 1px $table-header-border;
+    border-left: solid 1px $table-header-border;
+  }
+  &:first-of-type .flex-row {
+    background: $table-header;
+    color: white;
+    border-color: $table-header-border;
+  }
+}
+
+.flex-row {
+  width: calc(100% / 8);
+  text-align: center;
+  border-right: solid 1px $table-border;
+  border-bottom: solid 1px $table-border;
+  .date-header {
+    display: inline-block;
+    width: 100%;
+    .day-number {
+      font-size: 12px;
+      text-align: left;
+      margin-left: 5px;
+      float: left;
+    }
+    .month-name {
+      color: $table-header;
+      font-weight: 700;
+      letter-spacing: 5px;
+    }
+  }
+  &.empty {
+    min-height: 52px;
+  }
+  &.even {
+    background: $row-bg;
+  }
+  &.total {
+    background: white;
+  }
+}
+
+.rowspan {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.column {
+  display: flex;
+  flex-flow: column wrap;
+  width: 75%;
+  padding: 0;
+  .flex-row {
+    display: flex;
+    flex-flow: row wrap;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    border-bottom: solid 1px $table-border;
+    &:hover {
+      background: $column-hover;
+      transition: 500ms;
+    }
+  }
+}
+
+.flex-cell {
+  text-align: center;
+  padding: 0.2em 0.2em;  
+  flex: 1 1 33.3%;
+  &:last-child {
+    border-right: 0;
+  }
+}
+
+.cut-text {
+  width: 145px;
+  overflow: hidden;
+  display: inline-block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+button, input[type="submit"], input[type="reset"].activity {
+  height: 42px;
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  &.hard-work {
+    background: bisque;
+    width: 100%;
+  }
+}
+
+@media all and (max-width: 767px) {
+  .flex-row {
+    width: calc(100% / 8);
+
+    &.first {
+      width: 100%;
+    }
+  }
+
+  .column {
+    width: 100%;
+  }
+}
+
+@media all and (max-width: 430px) {
+
+  .flex-table {
+    .flex-row {
+      border-bottom: 0;
+    }
+    .flex-row:last-of-type {
+      border-bottom: solid 1px $table-border;
+    }
+  }
+
+  .header {
+    .flex-row {
+      border-bottom: solid 1px;
+    }
+  }
+
+  .flex-row {
+    width: 100%;
+
+    &.first {
+      width: 100%;
+      border-bottom: solid 1px $table-border;
+    }
+  }
+
+  .column {
+    width: 100%;
+    .flex-row {
+      border-bottom: solid 1px $table-border;
+    }
+  }
+
+  .flex-cell {
+    width: 100%;
+  }
+}

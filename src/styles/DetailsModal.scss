@@ -1,0 +1,58 @@
+.row {
+  display: flex;
+  .sections-table {
+    width: 26%;
+    height: 506px;
+    overflow-y: scroll;
+    display: inline-block;
+
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td, th {
+      text-align: right;
+      padding: 0 8px 0 8px;
+    }
+
+    tr {
+      &.e {
+        background: #90EE90;
+      }
+      &.m {
+        background: #FFE4C4;
+      }
+      &.t {
+        background: #FFA07A;
+      }
+      &.i {
+        background: #F08080;
+      }
+      &.r {
+        background: #EE82EE;
+      }
+      
+    }
+  }
+
+  .map {
+    width: 74%;
+
+    .main-info {
+      display: flex;
+      font-weight: 500;
+      line-height: 50px;
+      text-align: center;
+      .column {
+        margin-left: 10px;
+      }
+    }
+
+    .input-info {
+      line-height: 50px;
+      text-align: center;
+    }
+  }
+}
