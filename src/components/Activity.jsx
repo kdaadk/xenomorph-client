@@ -1,54 +1,63 @@
-import React, {Component} from "react";
+import React, { useState } from "react";
 import runner from "../images/runner.png";
 import cycle from "../images/cycle.png";
 import ski from "../images/ski.png";
-import {DetailsModal} from "./DetailsModal";
+import { DetailsModal } from "./DetailsModal";
 
-class Activity extends Component {
-    state = {
-        openDetailsModal: false
-    }
+const Activity = props => {
+  const [openDetailsModal, setOpenDetailsModal] = useState(false);
 
-    setDetailsModalState = (value) => this.setState({openDetailsModal: value})
+  const setDetailsModalState = value => setOpenDetailsModal(value);
 
-    render() {
-        let { activity, style } = this.props;
-        const { openDetailsModal } = this.state;
-        
-        if (activity.score > 20 && activity.type === "Run")
-            style = style.concat(" hard-work");
+  const renderActivity = (type, imgSrc, activity) => {
+    return (
+      activity.type === type && (
+        <span>
+          <img src={imgSrc} alt={type} width="32" height="32" />
+          <span> {getDescription(activity)}</span>
+        </span>
+      )
+    );
+  };
 
-        return (
-            <div>
-                <button className={style} role="cell" onClick={() => this.setDetailsModalState(true)}>
-                    {activity.type === "Run" && (
-                        <span>
-                            <img src={runner} alt="Run" width="32" height="32"/>
-                            {`${(activity.distance / 1000).toFixed(0)} km ${activity.score} score`}
-                        </span>
-                    )}
-                    {this.renderActivity("Ride", cycle, activity)}
-                    {this.renderActivity("Ski", ski, activity)}
-                </button>
-                {openDetailsModal && (
-                    <DetailsModal openModal={openDetailsModal} setOpenModal={this.setDetailsModalState} activity={activity}/>
-                )}
-            </div>
-        )
-    }
+  const getDescription = activity => {
+    return `${(activity.distance / 1000).toFixed(0)} km ${(
+      activity.time / 60
+    ).toFixed(0)} min`;
+  };
 
-    renderActivity(type, imgSrc, activity) {
-        return activity.type === type && (
-            <span>
-                <img src={imgSrc} alt={type} width="32" height="32"/>
-                <span> {this.getDescription(activity)}</span>
-            </span>
-        );
-    }
+  let { activity, style } = props;
 
-    getDescription(activity) {
-        return `${(activity.distance / 1000).toFixed(0)} km ${(activity.time / 60).toFixed(0)} min`;
-    }
-}
+  if (activity.score > 20 && activity.type === "Run")
+    style = style.concat(" hard-work");
 
-export { Activity };
+  return (
+    <div>
+      <button
+        className={style}
+        role="cell"
+        onClick={() => setDetailsModalState(true)}
+      >
+        {activity.type === "Run" && (
+          <span>
+            <img src={runner} alt="Run" width="32" height="32" />
+            {`${(activity.distance / 1000).toFixed(0)} km ${
+              activity.score
+            } score`}
+          </span>
+        )}
+        {renderActivity("Ride", cycle, activity)}
+        {renderActivity("Ski", ski, activity)}
+      </button>
+      {openDetailsModal && (
+        <DetailsModal
+          openModal={openDetailsModal}
+          setOpenModal={setDetailsModalState}
+          activity={activity}
+        />
+      )}
+    </div>
+  );
+};
+
+export default Activity;

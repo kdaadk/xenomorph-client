@@ -12,28 +12,28 @@
       width: 100%;
     }
 
-    td, th {
+    td,
+    th {
       text-align: right;
       padding: 0 8px 0 8px;
     }
 
     tr {
       &.e {
-        background: #90EE90;
+        background: #90ee90;
       }
       &.m {
-        background: #FFE4C4;
+        background: #ffe4c4;
       }
       &.t {
-        background: #FFA07A;
+        background: #ffa07a;
       }
       &.i {
-        background: #F08080;
+        background: #f08080;
       }
       &.r {
-        background: #EE82EE;
+        background: #ee82ee;
       }
-      
     }
   }
 

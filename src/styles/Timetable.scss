@@ -30,7 +30,7 @@ div {
   &:first-of-type .flex-row {
     background: $table-header;
     color: white;
-    border-radius: 5px;;
+    border-radius: 5px;
   }
 }
 
@@ -93,7 +93,7 @@ div {
 
 .flex-cell {
   text-align: center;
-  padding: 0.2em 0.2em;  
+  padding: 0.2em 0.2em;
   flex: 1 1 33.3%;
   &:last-child {
     border-right: 0;
@@ -108,7 +108,9 @@ div {
   white-space: nowrap;
 }
 
-button, input[type="submit"], input[type="reset"].activity {
+button,
+input[type="submit"],
+input[type="reset"].activity {
   height: 42px;
   background: none;
   color: inherit;
@@ -138,7 +140,6 @@ button, input[type="submit"], input[type="reset"].activity {
 }
 
 @media all and (max-width: 430px) {
-
   .flex-table {
     .flex-row {
       border-bottom: 0;
