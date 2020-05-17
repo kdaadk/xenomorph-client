@@ -1,7 +1,7 @@
 .row {
   display: flex;
+
   .sections-table {
-    width: 26%;
     height: 506px;
     overflow-y: scroll;
     display: inline-block;
@@ -38,8 +38,6 @@
   }
 
   .map {
-    width: 74%;
-
     .main-info {
       display: flex;
       font-weight: 500;
