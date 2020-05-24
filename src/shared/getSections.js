@@ -4,8 +4,16 @@ const t = [4.6512, 4.3478]
 const m = [4.3478, 3.9216]
 const e = [3.9216, 0] //2.7778
 
-export function getSections(velocity, distance, time) {
-    if (!velocity || ! distance || ! time)
+const temps = [
+    { velocityInterval: e, name: "e"},
+    { velocityInterval: m, name: "m"},
+    { velocityInterval: t, name: "t"},
+    { velocityInterval: i, name: "i"},
+    { velocityInterval: r, name: "r"}
+]
+
+const getSections = (velocity, distance, time, activity) => {
+    if (!velocity || ! distance || ! time || activity.type !== "Run")
         return []
     
     const upTrends = getUpTrends(velocity, distance, time)
@@ -17,20 +25,25 @@ export function getSections(velocity, distance, time) {
         const prevStartSectionDist = j === 0 ? 0 : trends[j - 1].distance.from
         const prevStartSectionTime = j === 0 ? 0 : trends[j - 1].time.from
         const avgV = (trends[j].distance.from - prevStartSectionDist) / (trends[j].time.from - prevStartSectionTime)
-        processByTemp(avgV, sections, trends[j], prevStartSectionDist, prevStartSectionTime, e, "e")
-        processByTemp(avgV, sections, trends[j], prevStartSectionDist, prevStartSectionTime, m, "m")
-        processByTemp(avgV, sections, trends[j], prevStartSectionDist, prevStartSectionTime, t, "t")
-        processByTemp(avgV, sections, trends[j], prevStartSectionDist, prevStartSectionTime, i, "i")
-        processByTemp(avgV, sections, trends[j], prevStartSectionDist, prevStartSectionTime, r, "r")
+        temps.forEach(t =>
+            processByTemp(avgV, sections, trends[j], prevStartSectionDist, prevStartSectionTime, t.velocityInterval, t.name)
+        );
     }
 
-    if (sections.length === 0)
-        return []
+    if (sections.length === 0 || sections.every(s => s.temp === "e" ))
+        return [
+            {
+                temp: "e",
+                distance: {from: 0, to: activity.distance, total: activity.distance},
+                time: {from: 0, to: activity.time, total: activity.time},
+                avgV: getAvgVelocity(0, distance[time.length - 1], 0, time[time.length - 1])
+            }
+        ]
     
     let lastSection = sections[sections.length - 1]
     let lastDistance = distance[distance.length - 1]
     let lastTime = time[time.length - 1]
-    
+
     sections.push({
         temp: "e",
         distance: {from: lastSection.distance.to, to: lastDistance, total: lastDistance - lastSection.distance.to},
@@ -38,8 +51,7 @@ export function getSections(velocity, distance, time) {
         avgV: getAvgVelocity(lastSection.distance.to, lastDistance, lastSection.time.to, lastTime)
     })
 
-
-    for (let j = 0; j < trends.length; j++) {
+    for (let j = 0; j < sections.length; j++) {
         sections[j].distance.total = sections[j].distance.to - sections[j].distance.from
         sections[j].time.total = sections[j].time.to - sections[j].time.from
 
@@ -51,18 +63,10 @@ export function getSections(velocity, distance, time) {
 
     }
 
-    /*const divideSection = {easy:[], tempo:[]}
-    sections.forEach(s => s.temp === "e" ? divideSection.easy.push(s) : divideSection.tempo.push(s))
-    console.log(divideSection)
-    
-    let grouped = groupBy(divideSection.tempo, s => s.distance.round)
-    console.log(grouped)*/
-
-    console.log(sections)
     return sections
 }
 
-function getTrend(currentTrend) {
+const getTrend = (currentTrend) => {
     return {
         len: currentTrend.length,
         distance: {from: currentTrend[0].d, to: currentTrend[currentTrend.length - 1].d},
@@ -75,7 +79,7 @@ function getTrend(currentTrend) {
     }
 }
 
-function getUpTrends (velocity, distance, time) {
+const getUpTrends = (velocity, distance, time) => {
     let minValue = 0
     let currentTrend = []
     let trends = []
@@ -98,7 +102,7 @@ function getUpTrends (velocity, distance, time) {
     )
 }
 
-function getDownTrends (velocity, distance, time) {
+const getDownTrends = (velocity, distance, time) => {
     let maxValue = 10
     let currentTrend = []
     let trends = []
@@ -130,9 +134,9 @@ function getDownTrends (velocity, distance, time) {
     )
 }
 
-function getAvgVelocity (d1, d2, t1, t2) { return (d2 - d1) / (t2 - t1) }
+const getAvgVelocity =  (d1, d2, t1, t2) => (d2 - d1) / (t2 - t1);
 
-function processByTemp (avgV, sections, trend, prevStartSectionDist, prevStartSectionTime, tempBorder, temp) {
+const processByTemp = (avgV, sections, trend, prevStartSectionDist, prevStartSectionTime, tempBorder, temp) => {
     let last = sections[sections.length - 1]
     if (avgV < tempBorder[0] && avgV >= tempBorder[1]) {
         if (sections.length !== 0 && last.temp === temp) {
@@ -150,3 +154,5 @@ function processByTemp (avgV, sections, trend, prevStartSectionDist, prevStartSe
         }
     }
 }
+
+export { getSections }

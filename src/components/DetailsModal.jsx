@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import { ActivityMap } from "./ActivityMap";
@@ -15,6 +15,7 @@ import TextField from "@material-ui/core/TextField";
 import { SatisfactionRating } from "./SatisfactionRating";
 import { SectionTable } from "./SectionTable";
 import { getAverageVelocity } from "../shared/getAverageVelocity";
+import StreamTypes from "../enums/streamTypes";
 
 const getModalStyle = () => {
   const top = 50;
@@ -45,15 +46,15 @@ const getStreams = async id => {
 
 const DetailsModal = props => {
   const { openModal, setOpenModal, activity } = props;
-  const isRun = activity.type === "Run";
-  const [modalStyle] = React.useState(getModalStyle);
+  const [isRun] = useState(activity.type === "Run");
+  const [modalStyle] = useState(getModalStyle);
   const classes = useStyles();
 
-  const [satisfaction, setSatisfaction] = React.useState(
+  const [satisfaction, setSatisfaction] = useState(
     Number(activity.satisfaction)
   );
-  const [comment, setComment] = React.useState(Number(activity.comment));
-  const [open, setOpen] = React.useState(Boolean(openModal));
+  const [comment, setComment] = useState(Number(activity.comment));
+  const [open, setOpen] = useState(Boolean(openModal));
 
   const handleClose = async () => {
     activity.comment = comment;
@@ -61,84 +62,84 @@ const DetailsModal = props => {
     await api.updateActivity(activity).then(() => {
       setOpenModal(false);
       setOpen(false);
-      console.log("updated");
     });
   };
 
   const handleCommentChange = event => setComment(event.currentTarget.value);
 
-  const [streams, setStreams] = React.useState({
+  const [streams, setStreams] = useState({
     loading: false,
     velocity: [],
-    distance: [],
+    distance: [], 
+    latlng: [],
     sections: []
   });
 
   useEffect(() => {
-    setStreams({ loading: true, distance: [], velocity: [], sections: [] });
+    setStreams({ loading: true, distance: [], velocity: [], latlng: [], sections: [] });
     getStreams(activity.stravaActivityId).then(doc => {
-      const time = getStreamBy("time", doc.streams);
-      const velocity = kalman(getStreamBy("velocity_smooth", doc.streams));
-      const distance = getStreamBy("distance", doc.streams);
-      const sections = isRun ? getSections(velocity, distance, time) : [];
+      const time = getStreamBy(StreamTypes.time, doc.streams);
+      const velocity = kalman(getStreamBy(StreamTypes.velocity, doc.streams));
+      const distance = getStreamBy(StreamTypes.distance, doc.streams);
+      const sections = getSections(velocity, distance, time, activity);
       setStreams({
         loading: false,
         distance: distance,
         velocity: velocity,
+        latlng: getStreamBy(StreamTypes.latlng, doc.streams),
         sections: sections
       });
     });
-  }, [activity.stravaActivityId, isRun]);
+  }, [activity]);
 
   const body = (
     <Fade in={open}>
       <div style={modalStyle} className={classes.paper}>
-        <div className={classes.root} id="details-modal-content">
-          <div className="row">
-            {isRun && !streams.loading && (
-              <SectionTable
-                className="sections-table"
-                sections={streams.sections}
-              />
-            )}
-            <div className="map" style={{ width: isRun ? "74%" : "100%" }}>
-              <ActivityMap
-                center={activity.startPoint}
-                encodedRoute={activity.mapPolyline}
-              />
-              <div className="main-info">
+        {!streams.loading && (
+            <div className={classes.root} id="details-modal-content">
+              <div className="row">
+                {isRun && (
+                    <SectionTable
+                        className="sections-table"
+                        sections={streams.sections}
+                    />
+                )}
+                <div className="map" style={{ width: isRun ? "74%" : "100%" }}>
+                  <ActivityMap
+                      center={activity.startPoint}
+                      latlng={streams.latlng}
+                  />
+                  <div className="main-info">
                 <span className="column">
                   Avg speed:{" "}
                   {getAverageVelocity(activity.distance, activity.time)}
                 </span>
-                <span className="column">Distance: {activity.distance}</span>
-                <span className="column">
+                    <span className="column">Distance: {activity.distance}</span>
+                    <span className="column">
                   Time: {activity.time.toString().toHHMMSS()}
                 </span>
+                  </div>
+                  <div className="input-info">
+                    <SatisfactionRating
+                        defaultValue={satisfaction}
+                        setValue={setSatisfaction}
+                    />
+                    <TextField
+                        style={{ width: "70%", marginLeft: "5%" }}
+                        label="Comment"
+                        defaultValue={activity.comment}
+                        onChange={handleCommentChange}
+                    />
+                  </div>
+                </div>
               </div>
-              <div className="input-info">
-                <SatisfactionRating
-                  defaultValue={satisfaction}
-                  setValue={setSatisfaction}
-                />
-                <TextField
-                  style={{ width: "70%", marginLeft: "5%" }}
-                  label="Comment"
-                  defaultValue={activity.comment}
-                  onChange={handleCommentChange}
-                />
-              </div>
+              <VelocityChart
+                  className="chart"
+                  distance={streams.distance}
+                  velocity={streams.velocity}
+              />
             </div>
-          </div>
-
-          {!streams.loading && (
-            <VelocityChart
-              className="chart"
-              distance={streams.distance}
-              velocity={streams.velocity}
-            />
-          )}
-        </div>
+        )}        
       </div>
     </Fade>
   );

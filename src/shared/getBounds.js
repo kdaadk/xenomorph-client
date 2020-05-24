@@ -1,4 +1,8 @@
-export function getBounds(points) {
+const getBounds = points => {
+    if (!points) {
+        return [];
+    }
+    
     let s = 0, n = 0, w = 0, e = 0;
     points.forEach(p => {
         if (s === 0 || s > p[0])
@@ -15,3 +19,5 @@ export function getBounds(points) {
         [s, w]
     ]
 }
+
+export { getBounds }

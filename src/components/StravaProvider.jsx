@@ -10,17 +10,9 @@ import ButtonGroup from "@material-ui/core/ButtonGroup";
 import { getStreamBy } from "../shared/getStreamBy";
 import { kalman } from "../shared/kalman";
 import { v4 as uuidv4 } from "uuid";
+import StreamTypes from "../enums/streamTypes";
 
 let stravaApi = strava;
-const StreamTypes = [
-  "velocity_smooth",
-  "time",
-  "distance",
-  "latlng",
-  "heartrate",
-  "cadence",
-  "altitude"
-];
 
 const StravaProvider = props => {
   useEffect(() => {
@@ -94,11 +86,11 @@ const StravaProvider = props => {
   };
 
   const _getStreamsAsync = async id =>
-    await stravaApi.streams.activity({ id: id, types: StreamTypes });
+    await stravaApi.streams.activity({ id: id, types: Object.entries(StreamTypes).map(x => x[1])});
 
   const _getScoreAsync = async streams => {
-    const velocitySmooth = kalman(getStreamBy("velocity_smooth", streams));
-    const time = getStreamBy("time", streams);
+    const velocitySmooth = kalman(getStreamBy(StreamTypes.velocity, streams));
+    const time = getStreamBy(StreamTypes.time, streams);
 
     let score = 0;
     for (let i = 1; i < time.length; i++) {
