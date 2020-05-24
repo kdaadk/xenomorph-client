@@ -10,18 +10,23 @@ import activitiesReducer from "../reducers/activities-reducer";
 import api from "../api";
 
 const useActivitiesApi = initialActivities => {
-  const [state, dispatch] = useReducer(activitiesReducer, initialActivities);
+  const init = initialActivities => {
+    return { activities: initialActivities };
+  };
+  const [state, dispatch] = useReducer(
+    activitiesReducer,
+    initialActivities,
+    init
+  );
 
   useEffect(() => {
-    const fetchActivities = async () => {
-      const result = await api.getActivities();
+    const fetchActivities = async () => await api.getActivities();
+    fetchActivities().then(r =>
       dispatch({
         type: UPDATE_ACTIVITIES,
-        payload: { activities: result.data.data }
-      });
-    };
-
-    fetchActivities();
+        payload: { activities: r.data.data }
+      })
+    );
   }, []);
 
   return state;
@@ -84,4 +89,4 @@ const Timetable = props => {
   );
 };
 
-export default Timetable;
+export { Timetable };

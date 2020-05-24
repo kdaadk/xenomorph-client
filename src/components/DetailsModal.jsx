@@ -10,13 +10,13 @@ import Fade from "@material-ui/core/Fade";
 import "../shared/stringExtensions";
 import "../styles/DetailsModal.scss";
 import { getSections } from "../shared/getSections";
-import VelocityChart from "./VelocityChart";
+import { VelocityChart } from "./VelocityChart";
 import TextField from "@material-ui/core/TextField";
-import SatisfactionRating from "./SatisfactionRating";
-import SectionTable from "./SectionTable";
+import { SatisfactionRating } from "./SatisfactionRating";
+import { SectionTable } from "./SectionTable";
 import { getAverageVelocity } from "../shared/getAverageVelocity";
 
-function getModalStyle() {
+const getModalStyle = () => {
   const top = 50;
   const left = 50;
 
@@ -25,7 +25,7 @@ function getModalStyle() {
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`
   };
-}
+};
 
 const useStyles = makeStyles(theme => ({
   paper: {
@@ -75,9 +75,8 @@ const DetailsModal = props => {
   });
 
   useEffect(() => {
-    const activityId = activity.stravaActivityId;
     setStreams({ loading: true, distance: [], velocity: [], sections: [] });
-    getStreams(activityId).then(doc => {
+    getStreams(activity.stravaActivityId).then(doc => {
       const time = getStreamBy("time", doc.streams);
       const velocity = kalman(getStreamBy("velocity_smooth", doc.streams));
       const distance = getStreamBy("distance", doc.streams);
@@ -89,7 +88,7 @@ const DetailsModal = props => {
         sections: sections
       });
     });
-  }, []);
+  }, [activity.stravaActivityId, isRun]);
 
   const body = (
     <Fade in={open}>
@@ -160,6 +159,6 @@ const DetailsModal = props => {
       {body}
     </Modal>
   );
-}
+};
 
 export { DetailsModal };

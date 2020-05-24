@@ -60,4 +60,4 @@ const Activity = props => {
   );
 };
 
-export default Activity;
+export { Activity };

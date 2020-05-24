@@ -55,4 +55,4 @@ const SatisfactionRating = props => {
   );
 };
 
-export default SatisfactionRating;
+export { SatisfactionRating };

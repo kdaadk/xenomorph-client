@@ -47,4 +47,4 @@ const VelocityChart = props => {
   return <Line data={chartData(distance, velocity)} options={options} />;
 };
 
-export default VelocityChart;
+export { VelocityChart };

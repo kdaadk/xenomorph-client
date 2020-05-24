@@ -1,46 +1,35 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Map, Polyline, TileLayer } from "react-leaflet";
 import "../styles/ActivityMap.scss";
 import { getBounds } from "../shared/getBounds";
 const polyUtil = require("polyline-encoded");
 
-class ActivityMap extends Component {
-  state = {
-    center: this.props.center,
-    polyline: [],
-    bounds: [],
-    zoom: 16
-  };
+const Zoom = 16;
 
-  decodeToPolyline = encodedRoute => polyUtil.decode(encodedRoute);
+const ActivityMap = props => {
+  const { center, polyline, encodedRoute } = props;
+  const [polylineState, setPolylineState] = useState([]);
+  const [bounds, setBounds] = useState([]);
 
-  componentDidMount() {
-    const polyline =
-      this.props.polyline || this.decodeToPolyline(this.props.encodedRoute);
-    this.setState({ polyline: polyline });
+  useEffect(() => {
+    const polylineState = polyline || polyUtil.decode(encodedRoute);
+    setPolylineState(polylineState);
+    setBounds(getBounds(polylineState));
+  }, [encodedRoute, polyline]);
 
-    const bounds = getBounds(polyline);
-    this.setState({ bounds: bounds });
-  }
-
-  render() {
-    const { center, zoom, bounds, polyline } = this.state;
-
-    return (
-      <Map
-        ref="map"
-        center={center}
-        zoom={zoom}
-        {...(bounds.length !== 0 ? { bounds: bounds } : {})}
-      >
-        <TileLayer
-          attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
-        <Polyline ref="polyline" color="#3f51b5" positions={polyline} />
-      </Map>
-    );
-  }
-}
+  return (
+    <Map
+      center={center}
+      zoom={Zoom}
+      {...(bounds.length !== 0 ? { bounds: bounds } : {})}
+    >
+      <TileLayer
+        attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+      />
+      <Polyline color="#3f51b5" positions={polylineState} />
+    </Map>
+  );
+};
 
 export { ActivityMap };

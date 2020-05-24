@@ -25,4 +25,4 @@ const SectionTable = props => {
   );
 };
 
-export default SectionTable;
+export { SectionTable };

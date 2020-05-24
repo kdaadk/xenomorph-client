@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Activity from "./Activity";
+import {Activity} from "./Activity";
 import SvgIcon from "@material-ui/core/SvgIcon";
 
 const PlusIcon = props => {

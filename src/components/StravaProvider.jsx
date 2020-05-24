@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect } from "react";
 import getUrlParameter from "../shared/getUrlParameter";
 import strava, { updateAccessToken } from "../shared/strava";
 import goTo from "../shared/goTo";
@@ -22,59 +22,36 @@ const StreamTypes = [
   "altitude"
 ];
 
-class StravaProvider extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      authCode: getUrlParameter("code"),
-      cookies: new Cookies()
-    };
-  }
+const StravaProvider = props => {
+  useEffect(() => {
+    const fetchToken = async () => await stravaApi.oauth.getToken(code);
 
-  async componentDidMount() {
-    const { cookies } = this.state;
+    const cookies = new Cookies();
     const authCode = cookies.get("auth_code");
     const code = getUrlParameter("code");
 
     if (code && code !== authCode) {
-      const payload = await stravaApi.oauth.getToken(code);
-      const accessToken = payload.access_token;
+      fetchToken().then(r => {
+        const accessToken = r.access_token;
+        cookies.set("auth_code", code);
+        cookies.set("access_token", accessToken);
 
-      cookies.set("auth_code", code, { path: "/home" });
-      cookies.set("access_token", accessToken, { path: "/home" });
-
-      stravaApi = updateAccessToken(payload.access_token);
+        stravaApi = updateAccessToken(r.access_token);
+      });
     }
 
     const accessToken = cookies.get("access_token");
     if (accessToken) {
       stravaApi = updateAccessToken(accessToken);
     }
-  }
+  }, []);
 
-  render() {
-    return (
-      <div>
-        <ButtonGroup
-          variant="contained"
-          color="primary"
-          aria-label="contained primary button group"
-        >
-          <Button onClick={() => this._auth()}>Auth Strava</Button>
-          <Button onClick={() => this._getStravaActivities()}>
-            Get last activities from Strava
-          </Button>
-        </ButtonGroup>
-      </div>
-    );
-  }
-
-  _auth() {
+  const _auth = () => {
     const url = strava.oauth.getRequestAccessURL({ scope: "activity:read" });
     goTo(url);
-  }
+  };
 
-  _getStravaActivities = async () => {
+  const _getStravaActivities = async () => {
     const response = await api.getLastActivity();
     const lastDateActivity = response.data.data[0].startDate;
     const timestampActivity = new Date(lastDateActivity).getTime() / 1000;
@@ -87,7 +64,7 @@ class StravaProvider extends Component {
     const newActivities = [];
     const newStreams = [];
     for (const a of listActivities) {
-      const streams = await this._getStreamsAsync(a.id);
+      const streams = await _getStreamsAsync(a.id);
 
       if (a.type === "Run" || a.type === "Ride") {
         newActivities.push({
@@ -101,7 +78,7 @@ class StravaProvider extends Component {
           time: a.moving_time,
           VDOT: 61,
           mapPolyline: a.map.summary_polyline,
-          score: a.type === "Run" && (await this._getScoreAsync(streams))
+          score: a.type === "Run" && (await _getScoreAsync(streams))
         });
         newStreams.push({
           _id: a.id,
@@ -116,10 +93,10 @@ class StravaProvider extends Component {
       .then(() => window.location.reload());
   };
 
-  _getStreamsAsync = async id =>
+  const _getStreamsAsync = async id =>
     await stravaApi.streams.activity({ id: id, types: StreamTypes });
 
-  _getScoreAsync = async streams => {
+  const _getScoreAsync = async streams => {
     const velocitySmooth = kalman(getStreamBy("velocity_smooth", streams));
     const time = getStreamBy("time", streams);
 
@@ -133,7 +110,22 @@ class StravaProvider extends Component {
     return score.toFixed(2);
   };
 
-  _createUser = async () => {
+  return (
+    <div>
+      <ButtonGroup
+        variant="contained"
+        color="primary"
+        aria-label="contained primary button group"
+      >
+        <Button onClick={() => _auth()}>Auth Strava</Button>
+        <Button onClick={() => _getStravaActivities()}>
+          Get last activities from Strava
+        </Button>
+      </ButtonGroup>
+    </div>
+  );
+
+  /*const _createUser = async () => {
     await api
       .updateUser({
         _id: uuidv4(),
@@ -156,7 +148,7 @@ class StravaProvider extends Component {
         ]
       })
       .then(() => console.log("created"));
-  };
-}
+  };*/
+};
 
 export { StravaProvider };
