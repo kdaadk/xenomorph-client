@@ -8,7 +8,8 @@ import stravaApi from "../shared/strava";
 import { authStrava, getStravaActivities } from "../shared/stravaActions";
 import { makeStyles } from "@material-ui/core/styles";
 
-export const UserMenu = () => {
+export const UserMenu = props => {
+  let { from, to, changeFrom } = props;
   const { anchorEl, handleClick, handleClose } = useAnchorEl();
   let stravaClient = useStravaAuth(stravaApi);
   const classes = useStyles();
@@ -20,6 +21,11 @@ export const UserMenu = () => {
 
   const handleClickGetLastActivities = () => {
     getStravaActivities(stravaClient).then(() => handleClose());
+  };
+  
+  const handleClickSelectPeriod = () => {
+    changeFrom('2020-06-06');
+    handleClose();
   };
 
   return (
@@ -42,10 +48,8 @@ export const UserMenu = () => {
         }}
       >
         <MenuItem onClick={handleClickAuth}>Auth Strava</MenuItem>
-        <MenuItem onClick={handleClickGetLastActivities}>
-          Get last activities
-        </MenuItem>
-        <MenuItem onClick={handleClickAuth}>Choose period</MenuItem>
+        <MenuItem onClick={handleClickGetLastActivities}>Get last activities</MenuItem>
+        <MenuItem onClick={handleClickSelectPeriod}>Select period</MenuItem>
       </Menu>
     </span>
   );

@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { Timetable } from "../components/Timetable";
 import { UserMenu } from "../components/UserMenu";
 import "../styles/Home.scss";
 
-const Home = props => {
+const Home = () => {
+  const [from, setFrom] = useState('2020-01-01');
+  const [to, setTo] = useState('2020-07-12');
+    
   return (
       <div className="xenomorph">
           <div>
-              <UserMenu />
+              <UserMenu from={from} to={to} changeFrom={setFrom}/>
           </div>
-          <Timetable />
+          <Timetable from={from} to={to}/>
       </div>
   );
 };

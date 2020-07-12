@@ -9,7 +9,12 @@ const api = axios.create({
 
 export const updateActivity = payload => api.post(`/activity`, payload);
 export const insertActivities = payload => api.post(`/activities`, payload);
-export const getActivities = () => api.get(`/activities`);
+export const getActivities = (from, to) => api.get(`/activities`, {
+  params: {
+    from: from,
+    to: to
+  }
+});
 export const getLastActivity = () => api.get(`/lastActivity`);
 export const deleteActivity = id => api.delete(`/activity/${id}`);
 

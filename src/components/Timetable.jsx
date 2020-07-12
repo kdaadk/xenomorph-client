@@ -9,7 +9,7 @@ import { UPDATE_ACTIVITIES } from "../actions/activities-actions";
 import activitiesReducer from "../reducers/activities-reducer";
 import api from "../api";
 
-const useActivitiesApi = initialActivities => {
+const useActivitiesApi = (initialActivities, from, to) => {
   const init = initialActivities => {
     return { activities: initialActivities };
   };
@@ -20,20 +20,21 @@ const useActivitiesApi = initialActivities => {
   );
 
   useEffect(() => {
-    const fetchActivities = async () => await api.getActivities();
-    fetchActivities().then(r =>
+    const fetchActivities = async (from, to) => await api.getActivities(from, to);
+    fetchActivities(from, to).then(r =>
       dispatch({
         type: UPDATE_ACTIVITIES,
         payload: { activities: r.data.data }
       })
     );
-  }, []);
+  }, [from, to]);
 
   return state;
 };
 
 const Timetable = props => {
-  const { activities } = useActivitiesApi([]);
+  const { from, to } = props;
+  const { activities } = useActivitiesApi([], from, to);
   const headers = moment.weekdays().concat("Total");
   if (!activities || activities.length === 0) {
     return (
