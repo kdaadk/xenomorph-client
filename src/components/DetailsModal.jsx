@@ -39,11 +39,6 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const getStreams = async id => {
-  const response = await api.getStream(id);
-  return response.data.data;
-};
-
 const DetailsModal = props => {
   const { openModal, setOpenModal, activity } = props;
   const [isRun] = useState(activity.type === "Run");
@@ -76,8 +71,10 @@ const DetailsModal = props => {
   });
 
   useEffect(() => {
+    const fetchStreams = async id => await api.getStream(id).then(r => r.data.data);
+    
     setStreams({ loading: true, distance: [], velocity: [], latlng: [], sections: [] });
-    getStreams(activity.stravaActivityId).then(doc => {
+    fetchStreams(activity.stravaActivityId).then(doc => {
       const time = getStreamBy(StreamTypes.time, doc.streams);
       const velocity = kalman(getStreamBy(StreamTypes.velocity, doc.streams));
       const distance = getStreamBy(StreamTypes.distance, doc.streams);
@@ -90,7 +87,7 @@ const DetailsModal = props => {
         sections: sections
       });
     });
-  }, [activity]);
+  }, []);
 
   const body = (
     <Fade in={open}>

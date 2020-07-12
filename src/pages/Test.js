@@ -1,31 +1,30 @@
-import React, { Component } from "react";
+import React, {Component, useState} from "react";
 import Fade from "@material-ui/core/Fade";
 import Modal from "@material-ui/core/Modal";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Backdrop from "@material-ui/core/Backdrop";
 
-export class Test extends Component {
-  static displayName = Test.name;
-  state = {
-    openModal: false
-  };
+export const Test = props => {
+  const [openModal, setOpenModal] = useState(false);
 
-  setModalState = value => this.setState({ openModal: value });
+  const setModalState = value => setOpenModal(value);
 
-  render() {
-    const { openModal } = this.state;
-    return (
+  // eslint-disable-next-line no-restricted-globals
+  focus = () => {
+      console.log('focus');
+  }
+
+  return (
       <div>
-        <button onClick={() => this.setModalState(true)}>sections</button>
+        <button onClick={() => setModalState(true)}>sections</button>
         {openModal && (
-          <TransitionsModal
-            openModal={openModal}
-            setModalState={this.setModalState}
-          />
+            <TransitionsModal
+                openModal={openModal}
+                setModalState={setModalState}
+            />
         )}
       </div>
-    );
-  }
+  );
 }
 
 const useStyles = makeStyles(theme => ({

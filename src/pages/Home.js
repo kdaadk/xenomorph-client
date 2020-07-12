@@ -1,15 +1,16 @@
 import React from "react";
 import { Timetable } from "../components/Timetable";
-import { StravaProvider } from "../components/StravaProvider";
+import { UserMenu } from "../components/UserMenu";
+import "../styles/Home.scss";
 
 const Home = props => {
   return (
-    <div>
-      <header className="xenomorph">
-        <StravaProvider />
-        <Timetable />
-      </header>
-    </div>
+      <div className="xenomorph">
+          <div>
+              <UserMenu />
+          </div>
+          <Timetable />
+      </div>
   );
 };
 

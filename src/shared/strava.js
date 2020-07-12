@@ -6,8 +6,4 @@ strava.config({
     "redirect_uri"  : window.location.href
 });
 
-export function updateAccessToken(accessToken) {
-    return new strava.client(accessToken);
-} 
-
 export default strava;
