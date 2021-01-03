@@ -10,7 +10,7 @@ import Fade from "@material-ui/core/Fade";
 import "../shared/stringExtensions";
 import "../styles/DetailsModal.scss";
 import { getSections } from "../shared/getSections";
-import { VelocityChart } from "./VelocityChart";
+import { VelocityChart } from "./VelocityChart.jsx";
 import TextField from "@material-ui/core/TextField";
 import { SatisfactionRating } from "./SatisfactionRating";
 import { SectionTable } from "./SectionTable";
@@ -31,7 +31,7 @@ const getModalStyle = () => {
 const useStyles = makeStyles(theme => ({
   paper: {
     position: "absolute",
-    height: 950,
+    height: '90%',
     width: 950,
     backgroundColor: theme.palette.background.paper,
     border: "2px solid #000",

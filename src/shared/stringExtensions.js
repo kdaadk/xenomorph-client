@@ -11,5 +11,4 @@ String.prototype.toHHMMSS = function() {
     return hours.toString() === "00"
         ? minutes+':'+seconds
         : hours+':'+minutes+':'+seconds;
-    
 };

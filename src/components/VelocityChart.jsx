@@ -1,6 +1,6 @@
 import { Line } from "react-chartjs-2";
-import React from "react";
 import "../shared/stringExtensions";
+import React from "react";
 
 const chartData = (distance, velocity) => {
   return {
@@ -18,9 +18,9 @@ const chartData = (distance, velocity) => {
 
 const options = {
   responsive: true,
-  legend: {
+  /*legend: {
     position: "bottom"
-  },
+  },*/
   scales: {
     yAxes: [
       {
@@ -44,7 +44,7 @@ const options = {
 
 const VelocityChart = props => {
   const { distance, velocity } = props;
-  return <Line data={chartData(distance, velocity)} options={options} />;
+  return <Line data={chartData(distance, velocity)} options={options} height="50vh"/>;
 };
 
 export { VelocityChart };
