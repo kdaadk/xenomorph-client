@@ -16,7 +16,7 @@
     "leaflet": "^1.7.1",
     "lodash": "latest",
     "moment": "^2.29.1",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "polyline-encoded": "0.0.9",
     "react": "^16.14.0",
     "react-chartjs-2": "^2.11.1",
